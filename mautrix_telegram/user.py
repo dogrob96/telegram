@@ -313,6 +313,8 @@ class User(DBUser, AbstractUser, BaseUser):
                 self.log.exception("Failed to run post-login sync")
             finally:
                 self._is_backfilling = False
+        if self.tgid:
+            await self.push_bridge_state(BridgeStateEvent.CONNECTED)
 
     async def update(self, update: TypeUpdate) -> bool:
         if not self.is_bot:
